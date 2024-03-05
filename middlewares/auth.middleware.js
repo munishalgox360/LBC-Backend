@@ -3,7 +3,7 @@ import message from '../config/message.js';
 import UserModel from '../models/user.model.js';
 
 
-const accessToken = async (user) => {
+const accessToken = async (user,res) => {
     try {
         const payload = {
             id : user._id,
