@@ -46,7 +46,8 @@ const UserSchema = mongoose.Schema({
         type : String,
         trim : true,
         required : true
-    }
+    },
+    loginOTP : Number
 },{timestamps : true});
 
 

@@ -2,19 +2,23 @@ import message from "../config/message.js";
 import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
+import { ValidateMobNumber } from "../utilities/sms.utility.js";
 
 // ------------ User's Handlers ------------- //
 const RegisterUser = async (req, res) => {
   const data = req.body;
   try {
-    const UserExist = await UserModel.findOne({ userName: data.userName });
-    const EmailExist = await UserModel.findOne({ email: data.email });
+    // Entered Mobile Number is Valid or Invalid
+    const isValid = await ValidateMobNumber(data);
+    if(isValid){
+      const UserExist = await UserModel.findOne({ userName: data.userName });
+      const EmailExist = await UserModel.findOne({ email: data.email });
 
-    if (UserExist) {
+      if (UserExist) {
       return res.status(200).json({ status: 200, message: message.exist_u });
-    } else if (EmailExist) {
+      } else if (EmailExist) {
       return res.status(200).json({ status: 200, message: message.exist_e });
-    } else {
+      } else {
       //Password Hashing
       const hashedPassword = await bcrypt.hash(data.password, 12);
       const CreatePayload = {
@@ -34,6 +38,9 @@ const RegisterUser = async (req, res) => {
       } else {
         return res.status(200).json({ status: 401, response: CreateResponse, message: message.create_f });
       }
+      }
+    }else{
+      return res.status(200).json({ status : 401, message : message.invld_mobile });
     }
   } catch (error) {
     res.status(400).json({ status: 400, response: error.stack, message: error.message });
