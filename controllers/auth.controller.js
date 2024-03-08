@@ -2,9 +2,10 @@ import message from '../config/message.js';
 import UserModel from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { ObjectId } from 'mongodb';
-
 import { accessToken } from '../middlewares/auth.middleware.js'
+import { SendSMS } from '../utilities/sms.utility.js';
 import CreateNewOTP from '../utilities/otp.utility.js';
+
 // ------------ Authentication Handlers -------------- //
 
 const UserLogin = async (req, res) => {
@@ -28,9 +29,18 @@ const UserLogin = async (req, res) => {
        }else if(mobile){ // IInd Method
         const isExist =  await UserModel.findOne({ mobile : mobile });
         if(!isExist){
-            res.status(200).json({status : 401, message : message.unf_mobile});
+            return res.status(200).json({status : 401, message : message.unf_mobile});
         }else{
-            const NewOTP = await CreateNewOTP(4);
+            const otp = await CreateNewOTP(6);
+            const SendOTP = await SendSMS({ mobile : `${isExist.countryCode}${isExist.mobile}`, otp : otp, name : isExist.firstName });
+            if(SendOTP){ //check
+                const UpdateResp = await UserModel.findByIdAndUpdate({_id : new ObjectId(isExist._id)}, { $set : { loginOTP : otp }}, { new : true });
+                if(UpdateResp){
+                    return res.status(200).json({ status : 201, message : message.otp_s });
+                }
+            }else{
+                return res.status(200).json({ status : 401, message : message.otp_f });
+            }
         }
        }
     } catch (error) {
@@ -68,6 +78,8 @@ const UpdatePassword = async (req, res) => {
             }else{
                 return res.status(200).json({status : 401, message : message.read_f});
             }
+        }else{
+            return res.status(200).json({ status : 401, message : message.unf_mobile });
         }
     } catch (error) {
         res.status(400).json({ status : 400, response : error.stack, message : error.message});
@@ -84,5 +96,28 @@ const ForgetPassword = async (req, res) => {
 };
 
 
+const VerifyOTP = async (req, res) => {
+    const { mobile , otp } = req.body;
+    try {
+        const isUser = await UserModel.findOne({ mobile : Number(mobile) });
+        if(!isUser){
+            return res.status(200).json({ status : 401, message : message.read_f }); 
+        }else if(Number(otp) !== Number(isUser.loginOTP)){
+            res.status(200).json({ status : 401, message : message.inct_otp });
+        }else{
+            const token = await accessToken(isUser);
+            isUser.loginOTP = 0; isUser.save();
+            return res.status(200).json({ status : 201, response : isUser,token, message : message.login_s });
+        }
+    } catch (error) {
+        res.status(400).json({ status : 400, response : error.stack, message : error.message });
+    }
+};
+
+
+const VerifyUserAccount = async (req, res) => {
+    
+}
+
 // Export Authentication's Handlers
-export { UserLogin, UserLogout, UpdatePassword, ForgetPassword };
+export { UserLogin, UserLogout, UpdatePassword, ForgetPassword, VerifyOTP };

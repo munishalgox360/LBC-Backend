@@ -22,6 +22,12 @@ const message = {
     exist_u : "User Name Already Exists",
     exist_e : "Email Already Exists",
 
+    //OTP
+    otp_s : "OTP Send Successfully",
+    otp_f : "OTP Not Send",
+    inct_otp : "Incorrect OTP, Please enter otp carefully",
+    invld_mobile : "Please enter correct Mobile Number",
+
     // Auth 
     login_s : "Successfully Login",
     login_f : "Login Failed, Please Login Again",
@@ -36,7 +42,8 @@ const message = {
     password : "Incorrect Password",
     o_password : "Old Password is Incorrect",
     reset_s : "Password Successfully Changed",
-    reset_f : "Not Changed"
+    reset_f : "Not Changed",
+    
 }
 
 export default message;
