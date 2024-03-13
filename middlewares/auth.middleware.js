@@ -30,10 +30,14 @@ const verifyToken = async (req,res,next) => {
         if(!headerBearer) return res.status(200).json({status : 401, message : message.token }); 
         const token = headerBearer.split(" ")[1];
         const user = JWT.verify(token,process.env.JWT_SECRETKEY);
-        if(user) req.userId = user.id;
-        next();
+        if(user.verify){
+            req.userId = user.id;
+            next();
+        }else{
+            return res.status(200).json({ status : 401, message : message.verify_f });
+        }
     }catch(error){
-        res.status(400).json({ status : 400, response : error.stack, message : error.message });
+        res.status(400).json({ status : 400, response : error.message, message : message.auth_f });
     }
 };
 

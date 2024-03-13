@@ -15,15 +15,20 @@ app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 
 //Handle Logger and CORS
-app.use(morgan('combined'));
+app.use(morgan('dev'));
 app.use(cors('*'));
+
+app.set('view engine', 'ejs')
+app.use(express.static('./views'));
 
 //Set Path
 app.use("/uploads",express.static('uploads'));
 
 //Testing Route
 app.get("/",function(req,res){
-    res.send(`<h1> Welcome Express's Home Page IBC.COM </h1>`);
+    // res.send(`<h1> Welcome Express's Home Page IBC.COM </h1>`);
+    res.render('./views/index.html');
+    
 });
 
 //Routes Setup

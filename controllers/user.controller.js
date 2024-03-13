@@ -3,6 +3,8 @@ import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 import { ValidateMobNumber } from "../utilities/sms.utility.js";
+// import SendEmail from "../utilities/ses.utility.js";
+
 
 // ------------ User's Handlers ------------- //
 const RegisterUser = async (req, res) => {
@@ -13,15 +15,18 @@ const RegisterUser = async (req, res) => {
     if(isValid){
       const UserExist = await UserModel.findOne({ userName: data.userName });
       const EmailExist = await UserModel.findOne({ email: data.email });
+      const MobileExist = await UserModel.findOne({ mobile: data.mobile });
 
       if (UserExist) {
-      return res.status(200).json({ status: 200, message: message.exist_u });
+        return res.status(200).json({ status: 200, message: message.exist_u });
       } else if (EmailExist) {
-      return res.status(200).json({ status: 200, message: message.exist_e });
+        return res.status(200).json({ status: 200, message: message.exist_e });
+      } else if (MobileExist) {
+        return res.status(200).json({ status: 200, message: message.exist_mb });
       } else {
-      //Password Hashing
-      const hashedPassword = await bcrypt.hash(data.password, 12);
-      const CreatePayload = {
+        //Password Hashing
+        const hashedPassword = await bcrypt.hash(data.password, 12);
+        const CreatePayload = {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
@@ -30,10 +35,11 @@ const RegisterUser = async (req, res) => {
         country: data.country,
         pincode: data.pincode,
         userName: data.userName,
-        password: hashedPassword,
+        password: hashedPassword
       };
       const CreateResponse = await UserModel.create(CreatePayload);
-      if (CreateResponse) {
+      if (CreateResponse) {        
+        // await SendEmail(CreateResponse);
         return res.status(200).json({ status: 201, response: CreateResponse, message: message.create_s });
       } else {
         return res.status(200).json({ status: 401, response: CreateResponse, message: message.create_f });
@@ -42,7 +48,7 @@ const RegisterUser = async (req, res) => {
     }else{
       return res.status(200).json({ status : 401, message : message.invld_mobile });
     }
-  } catch (error) {
+  }catch (error) {
     res.status(400).json({ status: 400, response: error.stack, message: error.message });
   }
 };
@@ -60,12 +66,10 @@ const ReadUser = async (req, res) => {
 
     if (GetResponse) {
       return res
-        .status(200)
-        .json({ status: 201, response: GetResponse, message: message.fetch_s });
+        .status(200).json({ status: 201, response: GetResponse, message: message.fetch_s });
     } else {
       return res
-        .status(200)
-        .json({ status: 401, response: GetResponse, message: message.fetch_f });
+        .status(200).json({ status: 401, response: GetResponse, message: message.fetch_f });
     }
   } catch (error) {
     res

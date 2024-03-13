@@ -116,8 +116,19 @@ const VerifyOTP = async (req, res) => {
 
 
 const VerifyUserAccount = async (req, res) => {
-    
+    const userId = new ObjectId(req.params.userId);
+    console.log(userId);
+    try {
+        const verifyResp = await UserModel.findByIdAndUpdate({ _id : userId },{ verify : true }, { new : true });
+        if(verifyResp){
+            return res.status(200).json({ status : 201, response : verifyResp, message : message.verify_s });   
+        }else{
+            return res.status(200).json({ status : 401, response : verifyResp, message : message.verify_f });   
+        }
+    } catch (error) {
+        res.status(400).json({ status : 400, response : error.stack, message : error.message });
+    }
 }
 
 // Export Authentication's Handlers
-export { UserLogin, UserLogout, UpdatePassword, ForgetPassword, VerifyOTP };
+export { UserLogin, UserLogout, UpdatePassword, ForgetPassword, VerifyOTP, VerifyUserAccount };

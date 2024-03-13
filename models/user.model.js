@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 //@Schema for User
-const UserSchema = mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     firstName : {
         type : String,
         trim : true,
@@ -47,10 +47,14 @@ const UserSchema = mongoose.Schema({
         trim : true,
         required : true
     },
+    verify : {
+        type : Boolean,
+        default : false
+    },
     loginOTP : Number
 },{timestamps : true});
 
 
 //Derive model from UserSchema
-const UserModel = mongoose.model('user',UserSchema);
+const UserModel = new mongoose.model('user',UserSchema);
 export default UserModel;
