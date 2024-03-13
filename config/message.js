@@ -21,6 +21,7 @@ const message = {
     exist : "Already Exists",
     exist_u : "User Name Already Exists",
     exist_e : "Email Already Exists",
+    exist_mb : "Mobile Number Already Exists",
 
     //OTP
     otp_s : "OTP Send Successfully",
@@ -33,7 +34,10 @@ const message = {
     login_f : "Login Failed, Please Login Again",
     auth_s : "Authorized User",
     auth_f : "Un-Authorized User",
-   
+    verify : "Please Verify Your Account",
+    verify_s : "Account Successfully Verified",
+    verify_f : "Your Account is Not Verified",
+    key_m : "put this key inside handler function",
     // Token
     token_err : "Token Creation Failure",
     token : "Token Not Not Provided in Headers",
