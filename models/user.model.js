@@ -56,5 +56,5 @@ const UserSchema = new mongoose.Schema({
 
 
 //Derive model from UserSchema
-const UserModel = new mongoose.model('user',UserSchema);
+const UserModel = new mongoose.model('User',UserSchema);
 export default UserModel;
