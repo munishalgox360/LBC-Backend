@@ -3,8 +3,7 @@ import UserModel from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { accessToken } from '../middlewares/auth.middleware.js'
-import { SendSMS } from '../utilities/sms.utility.js';
-import CreateNewOTP from '../utilities/otp.utility.js';
+import NewSMS from '../templates/sms.template.js';
 
 // ------------ Authentication Handlers -------------- //
 
@@ -21,7 +20,11 @@ const UserLogin = async (req, res) => {
                 return res.status(200).json({status : 401, message : message.password });
             }else if(isExist && isSame){
                 const token = await accessToken(isExist);
-                return res.status(200).json({status : 201, response : isExist,token, message : message.login_s });
+                if(token){
+                    return res.status(200).json({status : 201, response : isExist,token, message : message.login_s });
+                }else{
+                    return res.status(200).json({ status : 401, message : message.verify_f });
+                }
             }else{
                 return res.status(200).json({status : 401, response : isExist, message : message.login_f });
             }
@@ -31,8 +34,7 @@ const UserLogin = async (req, res) => {
         if(!isExist){
             return res.status(200).json({status : 401, message : message.unf_mobile});
         }else{
-            const otp = await CreateNewOTP(6);
-            const SendOTP = await SendSMS({ mobile : `${isExist.countryCode}${isExist.mobile}`, otp : otp, name : isExist.firstName });
+            const SendOTP = await NewSMS(isExist);
             if(SendOTP){ //check
                 const UpdateResp = await UserModel.findByIdAndUpdate({_id : new ObjectId(isExist._id)}, { $set : { loginOTP : otp }}, { new : true });
                 if(UpdateResp){
@@ -106,8 +108,12 @@ const VerifyOTP = async (req, res) => {
             res.status(200).json({ status : 401, message : message.inct_otp });
         }else{
             const token = await accessToken(isUser);
-            isUser.loginOTP = 0; isUser.save();
-            return res.status(200).json({ status : 201, response : isUser,token, message : message.login_s });
+            if(token){
+                isUser.loginOTP = 0; isUser.save();
+                return res.status(200).json({ status : 201, response : isUser,token, message : message.login_s });
+            }else{
+                return res.status(200).json({ status : 401, message : message.verify_f });
+            }
         }
     } catch (error) {
         res.status(400).json({ status : 400, response : error.stack, message : error.message });

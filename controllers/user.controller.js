@@ -3,7 +3,7 @@ import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 import { ValidateMobNumber } from "../utilities/sms.utility.js";
-// import SendEmail from "../utilities/ses.utility.js";
+import VerifyAccountSES from "../templates/verify.template.js";
 
 
 // ------------ User's Handlers ------------- //
@@ -27,23 +27,23 @@ const RegisterUser = async (req, res) => {
         //Password Hashing
         const hashedPassword = await bcrypt.hash(data.password, 12);
         const CreatePayload = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        countryCode: data.countryCode,
-        mobile: data.mobile,
-        country: data.country,
-        pincode: data.pincode,
-        userName: data.userName,
-        password: hashedPassword
-      };
-      const CreateResponse = await UserModel.create(CreatePayload);
-      if (CreateResponse) {        
-        // await SendEmail(CreateResponse);
-        return res.status(200).json({ status: 201, response: CreateResponse, message: message.create_s });
-      } else {
-        return res.status(200).json({ status: 401, response: CreateResponse, message: message.create_f });
-      }
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          countryCode: data.countryCode,
+          mobile: data.mobile,
+          country: data.country,
+          pincode: data.pincode,
+          userName: data.userName,
+          password: hashedPassword
+        };
+        const CreateResponse = await UserModel.create(CreatePayload);
+        if (CreateResponse) {        
+          const resp = await VerifyAccountSES(CreateResponse);
+          if(resp) return res.status(200).json({ status: 201, response: CreateResponse, message: message.create_s });
+        } else {
+          return res.status(200).json({ status: 401, response: CreateResponse, message: message.create_f });
+        }
       }
     }else{
       return res.status(200).json({ status : 401, message : message.invld_mobile });
@@ -65,16 +65,12 @@ const ReadUser = async (req, res) => {
     }
 
     if (GetResponse) {
-      return res
-        .status(200).json({ status: 201, response: GetResponse, message: message.fetch_s });
+      return res.status(200).json({ status: 201, response: GetResponse, message: message.fetch_s });
     } else {
-      return res
-        .status(200).json({ status: 401, response: GetResponse, message: message.fetch_f });
+      return res.status(200).json({ status: 401, response: GetResponse, message: message.fetch_f });
     }
   } catch (error) {
-    res
-      .status(400)
-      .json({ status: 400, response: error.stack, message: error.message });
+    res.status(400).json({ status: 400, response: error.stack, message: error.message });
   }
 };
 

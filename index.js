@@ -18,17 +18,12 @@ app.use(express.urlencoded({extended : true}));
 app.use(morgan('dev'));
 app.use(cors('*'));
 
-app.set('view engine', 'ejs')
-app.use(express.static('./views'));
-
 //Set Path
 app.use("/uploads",express.static('uploads'));
 
 //Testing Route
 app.get("/",function(req,res){
-    // res.send(`<h1> Welcome Express's Home Page IBC.COM </h1>`);
-    res.render('./views/index.html');
-    
+    res.send(`<h1> Welcome Express's Home Page IBC.COM </h1>`);
 });
 
 //Routes Setup
