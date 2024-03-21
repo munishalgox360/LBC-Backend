@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.use('/user', userRoute);
 router.use('/auth', authRoute);
-router.use('/payment', /*verifyToken,*/ paymentRoute);
+router.use('/payment', verifyToken, paymentRoute);
 
 export default router;
