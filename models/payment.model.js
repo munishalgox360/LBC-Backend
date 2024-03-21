@@ -7,17 +7,31 @@ const PaymentSchema = new mongoose.Schema({
         ref : "User",
         require : true
     },
-    razorpay_payment_id : {
+    amount : {
+        type : Number,
+        require : true
+    },
+    currencyUnit : {
         type : String,
         trim : true,
         require : true
     },
-    razorpay_order_id : {
+    method : {
         type : String,
         trim : true,
         require : true
     },
-    razorpay_signature : {
+    status : {
+        type : String,
+        trim : true,
+        require : true
+    },
+    paymentId : {
+        type : String,
+        trim : true,
+        require : true
+    },
+    orderId : {
         type : String,
         trim : true,
         require : true
@@ -27,19 +41,3 @@ const PaymentSchema = new mongoose.Schema({
 //Derive Model from Payment Schema
 const PaymentModel = new mongoose.model('payment',PaymentSchema);
 export default PaymentModel;
-
-
-  // amount : {
-    //     type : Number,
-    //     require : true
-    // },
-    // currencyUnit : {
-    //     type : String,
-    //     trim : true,
-    //     required : true
-    // },
-    // method : {
-    //     type : String,
-    //     trim : true,
-    //     enum : ['Deposit', 'Withdrawl']
-    // },
