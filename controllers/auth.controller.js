@@ -3,9 +3,10 @@ import UserModel from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { accessToken } from '../middlewares/auth.middleware.js'
+import CookiesSession from '../utilities/cookie.utility.js';
 import NewSMS from '../templates/sms.template.js';
 
-// ------------ Authentication Handlers -------------- //
+// ------------ Authentication Controllers -------------- //
 
 const UserLogin = async (req, res) => {
     const { email, password, mobile } = req.body;
@@ -21,7 +22,7 @@ const UserLogin = async (req, res) => {
             }else if(isExist && isSame){
                 const token = await accessToken(isExist);
                 if(token){
-                    return res.status(200).json({status : 201, response : isExist,token, message : message.login_s });
+                    CookiesSession(isExist, token, message.login_s, res);
                 }else{
                     return res.status(200).json({ status : 401, message : message.verify_f });
                 }
@@ -110,7 +111,7 @@ const VerifyOTP = async (req, res) => {
             const token = await accessToken(isUser);
             if(token){
                 isUser.loginOTP = 0; isUser.save();
-                return res.status(200).json({ status : 201, response : isUser,token, message : message.login_s });
+                CookiesSession(isUser, token, message.login_s, res);
             }else{
                 return res.status(200).json({ status : 401, message : message.verify_f });
             }
@@ -123,7 +124,7 @@ const VerifyOTP = async (req, res) => {
 
 const VerifyUserAccount = async (req, res) => {
     const userId = new ObjectId(req.params.userId);
-    console.log(userId);
+
     try {
         const verifyResp = await UserModel.findByIdAndUpdate({ _id : userId },{ verify : true }, { new : true });
         if(verifyResp){
@@ -136,5 +137,5 @@ const VerifyUserAccount = async (req, res) => {
     }
 }
 
-// Export Authentication's Handlers
+
 export { UserLogin, UserLogout, UpdatePassword, ForgetPassword, VerifyOTP, VerifyUserAccount };

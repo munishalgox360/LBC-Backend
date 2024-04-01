@@ -6,7 +6,7 @@ import { ValidateMobNumber } from "../utilities/sms.utility.js";
 import VerifyAccountSES from "../templates/verify.template.js";
 
 
-// ------------ User's Handlers ------------- //
+// ------------ User's Controllers ------------- //
 const RegisterUser = async (req, res) => {
   const data = req.body;
   try {
@@ -39,8 +39,8 @@ const RegisterUser = async (req, res) => {
         };
         const CreateResponse = await UserModel.create(CreatePayload);
         if (CreateResponse) {        
-          const resp = await VerifyAccountSES(CreateResponse);
-          if(resp) return res.status(200).json({ status: 201, response: CreateResponse, message: message.create_s });
+          /*const resp = await VerifyAccountSES(CreateResponse);
+          if(resp)*/ return res.status(200).json({ status: 201, response: CreateResponse, message: message.create_s });
         } else {
           return res.status(200).json({ status: 401, response: CreateResponse, message: message.create_f });
         }

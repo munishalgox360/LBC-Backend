@@ -48,6 +48,12 @@ const message = {
     reset_s : "Password Successfully Changed",
     reset_f : "Not Changed",
     
+    // Money Withdrawl
+    w_s : "Withdrawl in Process....",
+    w_f : "Withdrawl Fail",
+
+    //Allow
+    ticket_lmt : "Only Five Ticket Allow"
 }
 
 export default message;
