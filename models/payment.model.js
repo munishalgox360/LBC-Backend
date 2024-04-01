@@ -16,12 +16,12 @@ const PaymentSchema = new mongoose.Schema({
         trim : true,
         require : true
     },
-    method : {
+    paymentMethod : {
         type : String,
         trim : true,
         require : true
     },
-    status : {
+    paymentStatus : {
         type : String,
         trim : true,
         require : true
@@ -35,6 +35,12 @@ const PaymentSchema = new mongoose.Schema({
         type : String,
         trim : true,
         require : true
+    },
+    paymentType : {
+        type : String,
+        trim : true,
+        required : true,
+        default : "Deposit"
     }
 },{ timestamps : true });
 

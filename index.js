@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import cors from 'cors';
 import connectDB  from './config/dbconnect.js';
 import router from './routes/index.route.js';
+import cookieParser from 'cookie-parser';
 
 // Create App
 const app = express();
@@ -16,7 +17,17 @@ app.use(express.urlencoded({extended : true}));
 
 //Handle Logger and CORS
 app.use(morgan('dev'));
+//WhiteListing
+const corsOptions = {
+    origin: "http://www.localhost:3000",
+    methods: "OPTIONS, GET, POST, PUT, PATCH, DELETE",
+    allowedHeaders: ["Content-Type", "Authorization", "x-origin"],
+    credentials: true,  
+    optionsSuccessStatus: 204,
+}
+
 app.use(cors('*'));
+app.use(cookieParser());
 
 //Set Path
 app.use("/uploads",express.static('uploads'));
@@ -27,7 +38,7 @@ app.get("/",function(req,res){
 });
 
 //Routes Setup
-app.use('/api',router);
+app.use('/api', router);
 
 
 app.listen(PORT,console.log(`Express listening on port ${PORT}`));

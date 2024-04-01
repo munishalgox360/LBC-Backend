@@ -51,7 +51,9 @@ const UserSchema = new mongoose.Schema({
         type : Boolean,
         default : false
     },
-    loginOTP : Number
+    loginOTP : Number,
+    amount : Number,
+    isAdmin : false
 },{timestamps : true});
 
 
