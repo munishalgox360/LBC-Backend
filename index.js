@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 //Handle JSON
 app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+app.use(express.urlencoded({ extended : true }));
 
 //Handle Logger and CORS
 app.use(morgan('dev'));
@@ -29,11 +29,8 @@ const corsOptions = {
 app.use(cors('*'));
 app.use(cookieParser());
 
-//Set Path
-app.use("/uploads",express.static('uploads'));
-
 //Testing Route
-app.get("/",function(req,res){
+app.get("/",function(req, res){
     res.send(`<h1> Welcome Express's Home Page IBC.COM </h1>`);
 });
 

@@ -35,7 +35,8 @@ const RegisterUser = async (req, res) => {
           country: data.country,
           pincode: data.pincode,
           userName: data.userName,
-          password: hashedPassword
+          password: hashedPassword,
+          isAdmin : data.isAdmin ?? false 
         };
         const CreateResponse = await UserModel.create(CreatePayload);
         if (CreateResponse) {        

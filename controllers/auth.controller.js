@@ -22,7 +22,8 @@ const UserLogin = async (req, res) => {
             }else if(isExist && isSame){
                 const token = await accessToken(isExist);
                 if(token){
-                    CookiesSession(isExist, token, message.login_s, res);
+                    // CookiesSession(isExist, token, message.login_s, res);
+                    return res.status(200).json({ status : 201, response : isExist, token, message : message.login_s });
                 }else{
                     return res.status(200).json({ status : 401, message : message.verify_f });
                 }
@@ -111,7 +112,8 @@ const VerifyOTP = async (req, res) => {
             const token = await accessToken(isUser);
             if(token){
                 isUser.loginOTP = 0; isUser.save();
-                CookiesSession(isUser, token, message.login_s, res);
+                // CookiesSession(isUser, token, message.login_s, res);
+                return res.status(200).json({ status : 201, response : isUser, token, message : message.login_s });
             }else{
                 return res.status(200).json({ status : 401, message : message.verify_f });
             }

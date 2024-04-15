@@ -1,15 +1,14 @@
 import mongoose from "mongoose";
 
 //@ Schema for Ticket Categories
-const TicketCategoriesSchema = new mongoose.Schema({
+const TicketSchema = new mongoose.Schema({
     adminId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
         required : true
     },
-    price : {
+    amount : {
         type : Number,
-        trim : true,
         required : true
     },
     active : {
@@ -19,7 +18,7 @@ const TicketCategoriesSchema = new mongoose.Schema({
 },{ timestamps : true });
 
 // Derive Model from Ticket Schema
-const TicketModel = new mongoose.model("TicketCategories", TicketCategoriesSchema);
+const TicketModel = new mongoose.model("Ticket", TicketSchema);
 export default TicketModel;
 
 
