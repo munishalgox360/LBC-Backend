@@ -1,19 +1,26 @@
 import TicketModel from '../models/ticket.model.js';
 import message from '../config/message.js';
+import { ObjectId } from 'mongodb';
 
 // ------------- Ticket Controllers --------------
 
 const CreateTicket = async (req, res) => {
       
     const adminId = new ObjectId(req.userId);
-    const price = Number(req.body.price);
+    const amount = Number(req.body.amount);
     const length = await TicketModel.countDocuments();
-    if(length === 5){
+    if(length === 5){ //check length
         return res.status(200).json({ status : 401, message : message.ticket_lmt });
     } 
+    
+    const isExist = await TicketModel.findOne({ amount : amount });
+    if(isExist){ //check exist
+        return res.status(200).json({ status : 401, message : message.exist });
+    }
 
     try {
-        const createPayload = { adminId : adminId, price : price };
+        const createPayload = { adminId : adminId, amount : amount };
+        
         const createResp = await TicketModel.create(createPayload);
         if(createResp){
             return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
@@ -28,7 +35,7 @@ const CreateTicket = async (req, res) => {
 
 const ReadTicket = async (req, res) => {
     try {
-        const getResp = await TicketModel.find({}).sort({ price : 1 });
+        const getResp = await TicketModel.find({}).sort({ amount : 1 }).populate("adminId");
         if(getResp.length > 0){
             return res.status(200).json({ status : 201, response : getResp, message : message.read_s });
          }else{
@@ -44,7 +51,6 @@ const UpdateTicket = async (req, res) => {
 
     const ticketId = new ObjectId(req.body.ticketId);
     const status = req.body.status;
-
     try {
         const updateResp = await TicketModel.findByIdAndUpdate({ _id : ticketId }, { active : status }, { new : true });
         if(updateResp){

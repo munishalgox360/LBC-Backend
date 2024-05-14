@@ -5,9 +5,9 @@ const router = express.Router();
 // --------------- REST API -----------------
 
 router.post('/create', CreateTicket);
-router.post('/read', ReadTicket);
-router.post('/update', UpdateTicket);
-router.post('/delete', DeleteTicket);
+router.get('/read', ReadTicket);
+router.put('/update', UpdateTicket);
+router.delete('/delete', DeleteTicket);
 
 export default router;
 

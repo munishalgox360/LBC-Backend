@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 
 //@ Schema for Ticket's Buyers
-const TicketBuyersSchema = new mongoose.Schema({
+const TicketNumberSchema = new mongoose.Schema({
     userId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
@@ -12,9 +12,13 @@ const TicketBuyersSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Ticket",
         required : true
+    },
+    ticketNumber : {
+        type : Number,
+        required : true
     }
-});
+},{ timestamps : true });
 
 // Derive Model from Ticket Buyer's Schema
-const TicketBuyersModel = new mongoose.model("TicketBuyers", TicketBuyersSchema);
-export default TicketBuyersModel;
+const TicketNumberModel = new mongoose.model("TicketNumber", TicketNumberSchema);
+export default TicketNumberModel;

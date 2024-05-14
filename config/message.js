@@ -40,7 +40,7 @@ const message = {
     key_m : "put this key inside handler function",
     // Token
     token_err : "Token Creation Failure",
-    token : "Token Not Not Provided in Headers",
+    token : "Token Not Available in Headers",
 
     // Password
     password : "Incorrect Password",
