@@ -13,32 +13,30 @@ const CreateTicketNumber = async (req, res) => {
     const ticketNumber = Number(req.body.ticketNumber);
 
     const ticketStatus = await TicketModel.findById({ _id : ticketId });
-    const isSelected = await TicketNumberModel.findOne({ userId : userId, ticketId : ticketId, ticketNumber : ticketNumber });
-    
-    if(isSelected){
-        return res.status(200).json({ status : 401, message : "Ticket's Number Already Selected" });
-    }
     if(!ticketStatus.active){ 
         return res.status(200).json({ status : 401, message : "Ticket is In-active" });
     }
+
+    const isSelected = await TicketNumberModel.findOne({ userId : userId, ticketId : ticketId, ticketNumber : ticketNumber });
+    if(isSelected){
+        return res.status(200).json({ status : 401, message : "Ticket's Number Already Selected" });
+    }
+    
         
     try {
         const createPayload = {
-            userId: req.userId,
+            userId: userId,
             ticketId: ticketId,
             ticketNumber: ticketNumber   
         };
-
-        const getResp = await TicketModel.findById({ _id : ticketId });
-        if(!getResp) return res.status(200).json({ status : 401, message : message.read_f });    
-                
+                   
         const decreaseResp = await DecreaseAmount({ userId : userId, amount : getResp.amount }, res);
         if(!decreaseResp) return res.status(200).json({ status : 401, message : message.update_f });
 
         const createResp = await TicketNumberModel.create(createPayload);
         
         if(createResp){
-                return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
+            return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
         }else{
             return res.status(200).json({ status : 401, response : createResp, message : message.create_f });
         }

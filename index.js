@@ -4,7 +4,6 @@ import morgan from 'morgan'
 import cors from 'cors';
 import connectDB  from './config/dbconnect.js';
 import router from './routes/index.route.js';
-import cookieParser from 'cookie-parser';
 
 // Create App
 const app = express();
@@ -27,7 +26,6 @@ const corsOptions = {
 }
 
 app.use(cors('*'));
-app.use(cookieParser());
 
 //Testing Route
 app.get("/",function(req, res){

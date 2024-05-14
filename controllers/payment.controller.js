@@ -85,7 +85,7 @@ const WithdrawalMoney = async (req, res) => {
         if(!createResp) return res.status(200).json({ status : 401, message : message.create_f });
               
         if(createResp){
-            await DecreaseAmount({ userId : userId, amount : amount });
+            await DecreaseAmount({ userId : userId, amount : amount }, res);
             return res.status(200).json({ status : 201, message : message.w_s });
         }else{
             return res.status(200).json({ status : 401,  message : message.w_f });

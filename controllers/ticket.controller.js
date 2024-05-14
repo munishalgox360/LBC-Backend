@@ -20,6 +20,7 @@ const CreateTicket = async (req, res) => {
 
     try {
         const createPayload = { adminId : adminId, amount : amount };
+        
         const createResp = await TicketModel.create(createPayload);
         if(createResp){
             return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
