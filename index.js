@@ -8,7 +8,7 @@ import router from './routes/index.route.js';
 // Create App
 const app = express();
 // Port Setup
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 //Handle JSON
 app.use(express.json());
