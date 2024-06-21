@@ -30,7 +30,7 @@ const CreateTicketNumber = async (req, res) => {
             ticketNumber: ticketNumber   
         };
                    
-        const decreaseResp = await DecreaseAmount({ userId : userId, amount : getResp.amount }, res);
+        const decreaseResp = await DecreaseAmount({ userId : userId, amount : ticketStatus.amount }, res);
         if(!decreaseResp) return res.status(200).json({ status : 401, message : message.update_f });
 
         const createResp = await TicketNumberModel.create(createPayload);
