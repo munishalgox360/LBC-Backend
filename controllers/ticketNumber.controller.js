@@ -3,6 +3,8 @@ import { IncreaseAmount, DecreaseAmount } from '../utilities/amount.utility.js';
 import message from '../config/message.js';
 import { ObjectId } from 'mongodb';
 import TicketModel from '../models/ticket.model.js';
+import UserModel from "../models/user.model.js";
+
 
 // ------------- Ticket's Buyer Controllers --------------
 
@@ -11,10 +13,15 @@ const CreateTicketNumber = async (req, res) => {
     const userId = new ObjectId(req.userId);
     const ticketId = new ObjectId(req.body.ticketId);
     const ticketNumber = Number(req.body.ticketNumber);
+    const User = await UserModel.findById({ _id : userId });
 
-    const ticketStatus = await TicketModel.findById({ _id : ticketId });
-    if(!ticketStatus.active){ 
+    const ticket = await TicketModel.findById({ _id : ticketId });
+    if(!ticket.active){ 
         return res.status(200).json({ status : 401, message : "Ticket is In-active" });
+    }
+
+    if(User.amount < ticket.amount){
+        return res.status(200).json({ status : 401, message : "Inshufficent Balance" });
     }
 
     const isSelected = await TicketNumberModel.findOne({ userId : userId, ticketId : ticketId, ticketNumber : ticketNumber });
@@ -30,9 +37,8 @@ const CreateTicketNumber = async (req, res) => {
             ticketNumber: ticketNumber   
         };
                    
-        const decreaseResp = await DecreaseAmount({ userId : userId, amount : ticketStatus.amount }, res);
-        if(!decreaseResp) return res.status(200).json({ status : 401, message : message.update_f });
-
+        const decreaseResp = await DecreaseAmount({ userId : userId, amount : ticket.amount }, res);
+        
         const createResp = await TicketNumberModel.create(createPayload);
         
         if(createResp){
