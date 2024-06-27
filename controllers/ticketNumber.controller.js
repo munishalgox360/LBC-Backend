@@ -74,20 +74,18 @@ const ReadTicketNumber = async (req, res) => {
 const DeleteTicketNumber = async (req, res) => {
   
     const userId = new ObjectId(req.userId);
-    const numberId = new ObjectId(req.body.numberId);
+    const ticketId = new ObjectId(req.body.ticketId);
+    const ticketNumber = Number(req.body.ticketNumber);
 
     try {
         const deletePayload = {
-            _id: numberId,
+            ticketId: ticketId,
+            ticketNumber : ticketNumber,
             userId: userId
         };
 
-        const selectedNumber = await TicketNumberModel.findById({ _id : numberId });
-        if(!selectedNumber){
-            return res.status(200).json({ status : 401, message : message.read_f });        
-        }
-        
-        const ticket = await TicketModel.findById({ _id : selectedNumber.ticketId });
+                
+        const ticket = await TicketModel.findById({ _id : ticketId });
         if(!ticket){
             return res.status(200).json({ status : 401, message : message.read_f });        
         }        
@@ -102,7 +100,7 @@ const DeleteTicketNumber = async (req, res) => {
             return res.status(200).json({ status : 401, response : deleteResp, message : message.delete_f });    
         }
     } catch (error) {
-        res.status(400).json({ status : 400, response : error.stack, message : error.message});
+        res.status(400).json({ status : 400, response : error.stack, message : error.message });
     }
 };
 
