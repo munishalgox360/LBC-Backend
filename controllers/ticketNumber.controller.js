@@ -75,7 +75,6 @@ const DeleteTicketNumber = async (req, res) => {
   
     const userId = new ObjectId(req.userId);
     const numberId = new ObjectId(req.body.numberId);
-    const ticketId = new ObjectId(req.body.ticketId);
 
     try {
         const deletePayload = {
@@ -83,10 +82,17 @@ const DeleteTicketNumber = async (req, res) => {
             userId: userId
         };
 
-        const getResp = await TicketModel.findById({ _id : ticketId });
-        if(!getResp) return res.status(200).json({ status : 401, message : message.read_f });    
-                
-        const increaseResp = await IncreaseAmount({ userId : userId, amount : getResp.amount }, res);
+        const selectedNumber = await TicketNumberModel.findById({ _id : numberId });
+        if(!selectedNumber){
+            return res.status(200).json({ status : 401, message : message.read_f });        
+        }
+        
+        const ticket = await TicketModel.findById({ _id : selectedNumber.ticketId });
+        if(!ticket){
+            return res.status(200).json({ status : 401, message : message.read_f });        
+        }        
+
+        const increaseResp = await IncreaseAmount({ userId : userId, amount : ticket.amount }, res);
         if(!increaseResp) return res.status(200).json({ status : 401, message : message.update_f });
 
         const deleteResp = await TicketNumberModel.findOneAndDelete(deletePayload);        
