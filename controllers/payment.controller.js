@@ -40,7 +40,7 @@ const DepositMoney = async (req, res) => {
 
             const createPayload = {
                 userId : userId,
-                amount : detail.amount,
+                amount : Number(detail.amount)/100,
                 currencyUnit : detail.currency,
                 paymentMethod : detail.method,
                 paymentStatus : detail.status,
