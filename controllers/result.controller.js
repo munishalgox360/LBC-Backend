@@ -1,4 +1,4 @@
-import TicketNumberModel from "../models/ticketNumber.model.js";
+// import TicketNumberModel from "../models/ticketNumber.model.js";
 import ResultModel from "../models/result.model.js";
 import message from "../config/message.js";
 
@@ -7,27 +7,19 @@ const Result = async (req, res) => {
   const ticketCategoryId = req.query.ticketCategoryId;
 
   try {
-    const Number = await TicketNumberModel.find({ ticketId: ticketCategoryId });
-
-    for (let i = Number.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      let k = Number[i];
-      Number[i] = Number[j];
-      Number[j] = k;
-    }
 
     const resultDeclared = await ResultModel.findOne({ ticketId: ticketCategoryId });
     if (resultDeclared) {
       return res.status(200).json({ status: 401, message: "Result Already Declared" });
     }
 
-    const luckynumber = Number[Math.round(Math.random() * Number.length)];
+    const luckynumber = Math.floor(Math.random() * (101 - 1)) + 1;
 
     const createPayload = {
       ticketId: ticketCategoryId,
-      luckyNumber: luckynumber.ticketNumber
+      luckyNumber: luckynumber
     }
-
+    
     const result = await ResultModel.create(createPayload);
     return res.status(200).json({ status: 401, message: "Result Declared Successfully", response: result });
 
@@ -71,3 +63,33 @@ const DeleteDeclaredResult = async (req, res) => {
 
 
 export { Result, GetResult, DeleteDeclaredResult };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const Number = await TicketNumberModel.find({ ticketId: ticketCategoryId });
+
+    // for (let i = Number.length - 1; i > 0; i--) {
+    //   let j = Math.floor(Math.random() * (i + 1));
+    //   let k = Number[i];
+    //   Number[i] = Number[j];
+    //   Number[j] = k;
+    // }
+
+    // const resultDeclared = await ResultModel.findOne({ ticketId: ticketCategoryId });
+    // if (resultDeclared) {
+    //   return res.status(200).json({ status: 401, message: "Result Already Declared" });
+    // }
+
+    // const luckynumber = Number[Math.round(Math.random() * Number.length)];
