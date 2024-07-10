@@ -1,5 +1,6 @@
 import TicketModel from '../models/ticket.model.js';
 import message from '../config/message.js';
+import CountPlayerModel from '../models/playerCount.model.js';
 import { ObjectId } from 'mongodb';
 
 // ------------- Ticket Controllers --------------
@@ -20,9 +21,10 @@ const CreateTicket = async (req, res) => {
 
     try {
         const createPayload = { adminId : adminId, amount : amount };
-        
         const createResp = await TicketModel.create(createPayload);
+
         if(createResp){
+            const playerCount = await CountPlayerModel.create({ ticket : createResp._id });
             return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
          }else{
             return res.status(200).json({ status : 401, response : createResp, message : message.create_f });
