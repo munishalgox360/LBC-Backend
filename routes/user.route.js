@@ -18,4 +18,5 @@ router.delete("/resultDelete", verifyToken, DeleteDeclaredResult);
 // Count Players
 router.post("/player", verifyToken, CountTicketPlayer);
 router.get("/players", GetCountedPlayer);
+
 export default router;

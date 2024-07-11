@@ -73,8 +73,7 @@ const CountTicketPlayer = async (req, res) => {
   try {
     const isExist = await CountPlayerModel.findOne({ ticket: ticket });
     const count = isExist.players.length;
-    console.log(count)
-
+  
     if (!isExist) {
       return res.status(200).json({ status: 401, message: "Please Create Ticket, Before Player's Count" });
     }
@@ -107,7 +106,7 @@ const CountTicketPlayer = async (req, res) => {
 
 const GetCountedPlayer = async (req, res) => {
   const ticketId = req.query.ticketId;
-
+  
   try {
     const getResponse = await CountPlayerModel.findOne({ ticket : ticketId });
     res.status(200).json({ status : 201, response : getResponse.players.length, message : message.read_s });
