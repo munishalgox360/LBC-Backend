@@ -26,7 +26,7 @@ const CreateTicketNumber = async (req, res) => {
         return res.status(200).json({ status : 401, message : "Inshufficent Balance" });
     }
 
-    const match = { userId : userId, ticketId : ticketId, ticketNumber : ticketNumber, slotTime : slotTime };
+    const match = { userId : userId, ticketId : ticketId, ticketNumber : ticketNumber, slotTime : req.body.slotTime };
 
     const isSelected = await TicketNumberModel.findOne(match);
     if(isSelected){
