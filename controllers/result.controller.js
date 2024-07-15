@@ -78,21 +78,21 @@ const CountTicketPlayer = async (req, res) => {
     const isExist = await CountPlayerModel.findOne({ ticket: ticket });
 
     if (!isExist) {
-      return res.status(200).json({ status: 401, message: "Please Create Ticket, Before Player's Count" });
+      return res.status(200).json({ status: 401, message: "Create Ticket, Before Player's Count" });
     }
 
     if (isExist.slotTime === slotTime) {
       newCount = await CountPlayerModel.findOneAndUpdate({ ticket: ticket, slotTime: slotTime }, { $push: { players: player } }, { new: true });
+    }else{
+      const updatePayload = {
+        slotTime: slotTime,
+        $push: { players: player }
+      }
+  
+      newCount = await CountPlayerModel.findOneAndUpdate({ ticket: ticket }, updatePayload, { new: true });
     }
 
-    const updatePayload = {
-      slotTime: slotTime,
-      $push: { players: player }
-    }
-
-    newCount = await CountPlayerModel.findOneAndUpdate({ ticket: ticket }, updatePayload, { new: true });
-
-
+    
     if (newCount) {
       return res.status(200).json({ status: 201, response: newCount, message: message.create_s });
     } else {
@@ -109,12 +109,12 @@ const GetCountedPlayer = async (req, res) => {
   const ticketId = req.query.ticketId;
 
   try {
-    const getResponse = await CountPlayerModel.findOne({ ticket: ticketId });
+    const getResponse = await CountPlayerModel.find({ ticket: ticketId, slotTime : req.body.slotTime });
     res.status(200).json({ status: 201, response: getResponse.players.length, message: message.read_s });
   } catch (error) {
     res.status(400).json({ status: 400, response: error.stack, message: error.message });
   }
-}
+};
 
 
 
