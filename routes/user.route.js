@@ -11,7 +11,7 @@ router.put('/update', verifyToken, UpdateUser);
 router.delete('/delete', verifyToken, DeleteUser);
 
 // Result
-router.get("/result", verifyToken, Result);
+router.post("/result", verifyToken, Result);
 router.get("/resultFetch", GetResult);
 router.delete("/resultDelete", verifyToken, DeleteDeclaredResult);
 

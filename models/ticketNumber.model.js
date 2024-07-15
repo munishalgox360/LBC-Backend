@@ -16,6 +16,11 @@ const TicketNumberSchema = new mongoose.Schema({
     ticketNumber : {
         type : Number,
         required : true
+    },
+    slotTime : {
+        type : String,
+        trim : true,
+        required : true
     }
 },{ timestamps : true });
 
