@@ -6,6 +6,11 @@ const resultSchema = new mongoose.Schema({
         ref : "Ticket",
         required : true
     },
+    slotTime : {
+        type : String,
+        trim : true,
+        required : true
+    },
     luckyNumber : Number
 },{timestamps : true});
 

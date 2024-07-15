@@ -7,6 +7,11 @@ const countPlayerSchema = new mongoose.Schema({
         type : Schema.Types.ObjectId,
         ref : "Ticket"
     },
+    slotTime : {
+        type : String,
+        trim : true,
+        default : "slot"
+    },
     players : [
         {
             type : Schema.Types.ObjectId,

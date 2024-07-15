@@ -13,9 +13,11 @@ const CreateTicketNumber = async (req, res) => {
     const userId = new ObjectId(req.userId);
     const ticketId = new ObjectId(req.body.ticketId);
     const ticketNumber = Number(req.body.ticketNumber);
-    const User = await UserModel.findById({ _id : userId });
+    
 
+    const User = await UserModel.findById({ _id : userId });
     const ticket = await TicketModel.findById({ _id : ticketId });
+
     if(!ticket.active){ 
         return res.status(200).json({ status : 401, message : "Ticket is In-active" });
     }
@@ -24,9 +26,11 @@ const CreateTicketNumber = async (req, res) => {
         return res.status(200).json({ status : 401, message : "Inshufficent Balance" });
     }
 
-    const isSelected = await TicketNumberModel.findOne({ userId : userId, ticketId : ticketId, ticketNumber : ticketNumber });
+    const match = { userId : userId, ticketId : ticketId, ticketNumber : ticketNumber, slotTime : slotTime };
+
+    const isSelected = await TicketNumberModel.findOne(match);
     if(isSelected){
-        return res.status(200).json({ status : 401, message : "Ticket's Number Already Selected" });
+        return res.status(200).json({ status : 401, message : "Already Selected" });
     }
     
         
@@ -34,6 +38,7 @@ const CreateTicketNumber = async (req, res) => {
         const createPayload = {
             userId: userId,
             ticketId: ticketId,
+            slotTime: req.body.slotTime, 
             ticketNumber: ticketNumber   
         };
                    
@@ -59,14 +64,15 @@ const ReadTicketNumber = async (req, res) => {
     const ticketId = new ObjectId(req.body.ticketId);
 
     try {
-        const getResp = await TicketNumberModel.find({ userId : userId, ticketId : ticketId });    
+        const match = { userId : userId, ticketId : ticketId, slotTime : req.body.slotTime };
+        const getResp = await TicketNumberModel.find(match);    
         if(getResp.length > 0){
             res.status(200).json({ status : 201, response : getResp, message : message.read_s });
         }else{
             res.status(200).json({ status : 401, response : getResp, message : message.read_f });
         }
     } catch (error) {
-        res.status(400).json({ status : 400, response : error.stack, message : error.message});
+        res.status(400).json({ status : 400, response : error.stack, message : error.message });
     }
 };
 
@@ -79,9 +85,10 @@ const DeleteTicketNumber = async (req, res) => {
 
     try {
         const deletePayload = {
+            userId: userId,
             ticketId: ticketId,
             ticketNumber : ticketNumber,
-            userId: userId
+            slotTime : req.body.slotTime
         };
 
                 
