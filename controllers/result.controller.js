@@ -34,10 +34,10 @@ const Result = async (req, res) => {
 
 
 const GetResult = async (req, res) => {
-  const { ticketId, slotTime } = req.query;
+  // const { ticketId, slotTime } = req.query;
   try {
-    const match = { ticketId : ticketId, slotTime : slotTime };
-    const result = await ResultModel.findOne(match).populate("ticketId");
+    // const match = { ticketId : ticketId, slotTime : slotTime };
+    const result = await ResultModel.findOne({}).populate("ticketId");
 
     if (result) {
       return res.status(200).json({ status: 201, response: result, message: message.read_s });
