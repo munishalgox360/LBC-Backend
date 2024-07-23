@@ -38,7 +38,7 @@ const CreateTicket = async (req, res) => {
 
 const ReadTicket = async (req, res) => {
     try {
-        const getResp = await TicketModel.find({}).sort({ amount : 1 }).populate("adminId");
+        const getResp = await TicketModel.find({}).sort({ amount : 1 });
         if(getResp.length > 0){
             return res.status(200).json({ status : 201, response : getResp, message : message.read_s });
          }else{
