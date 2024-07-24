@@ -12,6 +12,16 @@ const countPlayerSchema = new mongoose.Schema({
         trim : true,
         default : "slot"
     },
+    month : {
+        type : String,
+        trim : true,
+        required : true
+    },
+    date : {
+        type : Number,
+        trim : true,
+        required : true
+    },
     players : [
         {
             type : Schema.Types.ObjectId,

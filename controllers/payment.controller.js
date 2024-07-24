@@ -37,10 +37,11 @@ const DepositMoney = async (req, res) => {
         const genSign = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET).update(keys.toString()).digest('hex');
         if(genSign === razorpay_signature){
             const detail = await PAYMENT.payments.fetch(razorpay_payment_id);
-
+            const amount = detail.amount/100;
+            
             const createPayload = {
                 userId : userId,
-                amount : Number(detail.amount)/100,
+                amount : amount,
                 currencyUnit : detail.currency,
                 paymentMethod : detail.method,
                 paymentStatus : detail.status,
