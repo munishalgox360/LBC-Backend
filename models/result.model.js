@@ -11,8 +11,17 @@ const resultSchema = new mongoose.Schema({
         trim : true,
         required : true
     },
+    month : {
+        type : String,
+        trim : true,
+        required : true
+    },
+    date : {
+        type : Number,
+        required : true
+    },
     luckyNumber : Number
-},{timestamps : true});
+},{ timestamps : true });
 
 
 const ResultModel = new mongoose.model("Result", resultSchema);

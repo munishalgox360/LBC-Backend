@@ -6,12 +6,11 @@ import message from "../config/message.js";
 
 
 const Result = async (req, res) => {
-  const ticketCategoryId = req.body.ticketCategoryId;
-  const slotTime = req.body.slotTime;
+  const { ticketCategoryId, slotTime, month, date } = req.body;
+  const match = { ticketCategoryId : ticketCategoryId, slotTime : slotTime, month : month, date : date };
 
-  try {
-
-    const resultDeclared = await ResultModel.findOne({ ticketId: ticketCategoryId, slotTime: slotTime });
+  try { 
+    const resultDeclared = await ResultModel.findOne(match);
     if (resultDeclared) {
       return res.status(200).json({ status: 401, message: "Result Already Declared" });
     }
@@ -20,8 +19,8 @@ const Result = async (req, res) => {
 
     const createPayload = {
       ticketId: ticketCategoryId,
-      slotTime: slotTime,
-      luckyNumber: luckynumber
+      slotTime: slotTime, month : month,
+      date : date, luckyNumber: luckynumber
     }
 
     const result = await ResultModel.create(createPayload);
@@ -34,10 +33,11 @@ const Result = async (req, res) => {
 
 
 const GetResult = async (req, res) => {
-  // const { ticketId, slotTime } = req.query;
+  const { month, date } = req.query;
+
   try {
-    // const match = { ticketId : ticketId, slotTime : slotTime };
-    const result = await ResultModel.find({}).populate("ticketId");
+    const match = { month: month, date : date };  
+    const result = await ResultModel.find(match).populate("ticketId");
 
     if (result) {
       return res.status(200).json({ status: 201, response: result, message: message.read_s });
@@ -71,9 +71,7 @@ const DeleteDeclaredResult = async (req, res) => {
 //--------------------------------------------------//
 
 const CountTicketPlayer = async (req, res) => {
-  const ticket = req.body.ticketId;
-  const player = req.body.playerId;
-  const slotTime = req.body.slotTime;
+  const { ticket, player, slotTime, month, date } = req.body;
   let newCount;
 
   try {
@@ -83,12 +81,12 @@ const CountTicketPlayer = async (req, res) => {
       return res.status(200).json({ status: 401, message: "Create Ticket, Before Player's Count" });
     }
 
-    if (isExist.slotTime === slotTime) {
+    if (isExist.slotTime === slotTime && isExist.month === month && isExist.date === date) {
       newCount = await CountPlayerModel.findOneAndUpdate({ ticket: ticket, slotTime: slotTime }, { $push: { players: player } }, { new: true });
     }else{
       const updatePayload = {
-        slotTime: slotTime,
-        $push: { players: player }
+        slotTime: slotTime, month: month, 
+        date: date, $push: { players: player }
       }
   
       newCount = await CountPlayerModel.findOneAndUpdate({ ticket: ticket }, updatePayload, { new: true });
@@ -108,10 +106,10 @@ const CountTicketPlayer = async (req, res) => {
 
 
 const GetCountedPlayer = async (req, res) => {
-  const ticketId = req.query.ticketId;
-
+  const { ticketId, slotTime, month, date } = req.query;
+  const match = { ticketId: ticketId , slotTime: slotTime , month: month, date: date };
   try {
-    const getResponse = await CountPlayerModel.find({ ticket: ticketId, slotTime : req.body.slotTime });
+    const getResponse = await CountPlayerModel.find(match);
     res.status(200).json({ status: 201, response: getResponse.players.length, message: message.read_s });
   } catch (error) {
     res.status(400).json({ status: 400, response: error.stack, message: error.message });
