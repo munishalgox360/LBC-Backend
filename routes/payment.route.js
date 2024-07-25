@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/create/order', CreateOrder);
 router.post('/verify', DepositMoney); 
-router.post('withdrawal', WithdrawalMoney);
+router.post('/withdrawal', WithdrawalMoney);
 router.get('/readTransaction', ReadTransaction);
 
 export default router;

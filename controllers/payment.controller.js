@@ -5,16 +5,26 @@ import message from "../config/message.js";
 import crypto from 'crypto';
 import { ObjectId } from "mongodb";
 import PaymentInvoiceSES from "../templates/payment.template.js";
+import UserModel from "../models/user.model.js";
+
 
 // -------------- Payment's Controllers ---------------
 
 const CreateOrder = async (req, res) => {
     const amount = req.body.amount;
+
     try {
+        const user = await UserModel.findById({ _id : req.userId });
+        if(!user){
+            return res.status(200).json({ status : 401, message : message.read_f });
+        }
+
         const options = {
             amount: Number(amount) * 100,  
-            currency: "INR"
+            currency: "INR",
+            customer_id : user.customerId
         };
+
         const createResp = await PAYMENT.orders.create(options);
         if(createResp){
            return res.status(200).json({ status : 201, response : createResp, message : message.create_s });

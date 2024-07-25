@@ -24,8 +24,7 @@ const CreateTicket = async (req, res) => {
         const createResp = await TicketModel.create(createPayload);
 
         if(createResp){
-            const playerCount = await CountPlayerModel.create({ ticket : createResp._id });
-            console.log("1111");
+            // const playerCount = await CountPlayerModel.create({ ticket : createResp._id });
             return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
          }else{
             return res.status(200).json({ status : 401, response : createResp, message : message.create_f });
