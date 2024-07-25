@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 //@Schema for User
 const UserSchema = new mongoose.Schema({
+    customerId : {
+        type : String,
+        trim : true,
+        required : true
+    },
     firstName : {
         type : String,
         trim : true,

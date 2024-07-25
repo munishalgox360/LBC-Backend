@@ -2,6 +2,7 @@ import message from "../config/message.js";
 import UserModel from "../models/user.model.js";
 import TicketNumberModel from '../models/ticketNumber.model.js';
 import ResultModel from "../models/result.model.js";
+import PAYMENT from "../utilities/payment.utility.js";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 // import { ValidateMobNumber } from "../utilities/sms.utility.js";
@@ -12,48 +13,52 @@ import { ObjectId } from "mongodb";
 
 const RegisterUser = async (req, res) => {
   const data = req.body;
+  
   try {
-    // Entered Mobile Number is Valid or Invalid
-    // const isValid = await ValidateMobNumber(data);
-    // if(isValid){
-
-
     const EmailExist = await UserModel.findOne({ email: data.email });
     const MobileExist = await UserModel.findOne({ mobile: data.mobile });
 
     if (EmailExist) {
-      return res.status(200).json({ status: 200, message: message.exist_e });
-    } else if (MobileExist) {
-      return res.status(200).json({ status: 200, message: message.exist_mb });
-    } else {
+      return res.status(200).json({ status: 401, message: message.exist_e });
+    }  
+     
+    if (MobileExist) {
+      return res.status(200).json({ status: 401, message: message.exist_mb });
+    } 
       //Password Hashing
-      const hashedPassword = await bcrypt.hash(data.password, 12);
+    const hashedPassword = await bcrypt.hash(data.password, 12);
 
-      const CreatePayload = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        countryCode: data.countryCode,
-        mobile: data.mobile,
-        country: data.country,
-        pincode: data.pincode,
-        userName: data.userName,
-        password: hashedPassword,
-        isAdmin: data.isAdmin || false
-      };
+    const customerInfo = {
+      name: `${data.firstName} ${data.lastName}`,
+      contact: data.mobile,
+      email: data.email,
+      fail_existing: 0
+    };
+      
+    const RzpCustomer = await PAYMENT.customers.create(customerInfo);
 
-      const CreateResponse = await UserModel.create(CreatePayload);
-      if (CreateResponse) {
-        /*const resp = await VerifyAccountSES(CreateResponse);
-        if(resp)*/
-        return res.status(200).json({ status: 201, response: CreateResponse, message: message.create_s });
-      } else {
-        return res.status(200).json({ status: 401, response: CreateResponse, message: message.create_f });
-      }
+    const CreatePayload = {
+      customerId : RzpCustomer.id,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      countryCode: data.countryCode,
+      mobile: data.mobile,
+      country: data.country,
+      pincode: data.pincode,
+      userName: data.userName,
+      password: hashedPassword,
+      isAdmin: data.isAdmin || false
+    };
+
+    const createResp = await UserModel.create(CreatePayload);
+    if (!createResp) {
+      return res.status(200).json({ status: 401, message: message.create_f });
     }
-    // }else{
-    //   return res.status(200).json({ status : 401, message : message.invld_mobile });
-    // }
+
+    if(createResp && RzpCustomer){
+      return res.status(200).json({ status : 201, response : createResp, message : message.create_s });
+    }
   } catch (error) {
     res.status(400).json({ status: 400, response: error.stack, message: error.message });
   }
