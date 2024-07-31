@@ -7,10 +7,11 @@ import message from "../config/message.js";
 
 const Result = async (req, res) => {
   const { ticketCategoryId, slotTime, month, date } = req.body;
-  const match = { ticketCategoryId : ticketCategoryId, slotTime : slotTime, month : month, date : date };
+  const match = { ticketId : ticketCategoryId, slotTime : slotTime, month : month, date : date };
 
   try { 
     const resultDeclared = await ResultModel.findOne(match);
+    
     if (resultDeclared) {
       return res.status(200).json({ status: 401, message: "Result Already Declared" });
     }
