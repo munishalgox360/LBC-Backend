@@ -47,10 +47,8 @@ const DepositMoney = async (req, res) => {
         const genSign = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET).update(keys.toString()).digest('hex');
         if(genSign === razorpay_signature){
             const detail = await PAYMENT.payments.fetch(razorpay_payment_id);
-            console.log(detail,"88");
 
             const amount = detail.amount/100;
-            console.log(amount);
             
             const createPayload = {
                 userId : userId,
@@ -64,7 +62,7 @@ const DepositMoney = async (req, res) => {
 
             let createResp = await PaymentModel.create(createPayload);
             if(createResp){
-                await IncreaseAmount({ userId : userId, amount : detail.amount }, res);
+                await IncreaseAmount({ userId : userId, amount : amount }, res);
                 // const resp = await PaymentInvoiceSES(createResp);
                 // if(resp)
                 return res.status(200).json({ status : 201, message : "Valid Transaction" });
