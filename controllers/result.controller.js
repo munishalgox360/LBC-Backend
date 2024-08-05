@@ -1,6 +1,7 @@
-// import TicketNumberModel from "../models/ticketNumber.model.js";
+import TicketNumberModel from "../models/ticketNumber.model.js";
 import ResultModel from "../models/result.model.js";
 import CountPlayerModel from "../models/playerCount.model.js";
+import UserModel from "../models/user.model.js";
 import message from "../config/message.js";
 
 
@@ -25,8 +26,16 @@ const Result = async (req, res) => {
     }
 
     const result = await ResultModel.create(createPayload);
-    return res.status(200).json({ status: 401, message: "Result Declared Successfully", response: result });
+    if(!result){
+      return res.status(200).json({ status: 401, message: "Failed To Declared Successfully" });
+    }
 
+    const find = { slotTime : result.slotTime, ticketNumber : result.luckyNumber };
+    const winners = await TicketNumberModel.find(find);
+
+    for(let winner of winners){
+      await UserModel.findByIdAndUpdate({ _id : winner._id }, { $inc : { amount : 100 }});
+    }
   } catch (error) {
     res.status(400).json({ status: 400, response: error.stack, message: error.message });
   }
