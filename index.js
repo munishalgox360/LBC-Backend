@@ -7,16 +7,15 @@ import router from './routes/index.route.js';
 
 // Create App
 const app = express();
-// Port Setup
 const PORT = process.env.PORT || 8000;
 
-//Handle JSON
+
 app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
 
-//Handle Logger and CORS
+
 app.use(morgan('dev'));
-//WhiteListing
+
 const corsOptions = {
     origin: "http://www.localhost:3000",
     methods: "OPTIONS, GET, POST, PUT, PATCH, DELETE",
@@ -32,7 +31,7 @@ app.get("/",function(req, res){
     res.send(`<h1> Welcome Express's Home Page IBC.COM </h1>`);
 });
 
-//Routes Setup
+//API's Endpoint
 app.use('/api', router);
 
 
