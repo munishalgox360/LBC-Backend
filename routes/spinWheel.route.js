@@ -1,5 +1,5 @@
 import express from "express";
-import { SpinWheel, WinningAmount } from "../controllers/spinWheel.controller";
+import { SpinWheel, WinningAmount } from "../controllers/spinWheel.controller.js";
 const router = express.Router();
 
 
