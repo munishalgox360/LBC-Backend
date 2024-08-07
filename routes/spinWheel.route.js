@@ -1,4 +1,4 @@
-import express from express;
+import express from "express";
 import { SpinWheel, WinningAmount } from "../controllers/spinWheel.controller";
 const router = express.Router();
 
