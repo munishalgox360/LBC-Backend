@@ -31,9 +31,7 @@ const DecreaseAmount = async (credential, res) => {
             { new : true }
         ); 
         
-        if(!decreaseResp){
-            return res.status(200).json({ status : 401, message : "Amount not deducted" });   
-        }
+        return true;
    } catch (error) {
        return res.status(400).json({ status : 400, response : error.stack, message : error.message });
    }
