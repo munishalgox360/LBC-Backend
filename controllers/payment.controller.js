@@ -111,7 +111,7 @@ const WithdrawalMoney = async (req, res) => {
 const ReadTransaction = async (req, res) => {
 
     let getResp;
-    const userId = new ObjectId(req.query.userId);
+    const userId = new ObjectId(req.userId);
     const page = Number(req.query.page);
     const filter = { $or: [ { userId : userId }, { $and : [ 
                                 { createdAt : { $gte : new Date(req.query.startDate).toISOString() }}, 
@@ -121,7 +121,7 @@ const ReadTransaction = async (req, res) => {
                     };
                     
     try {
-        if(req.query.startDate && req.query.endDate && userId){
+        if(req.query.startDate && req.query.endDate){
             getResp = await PaymentModel.find(filter).skip((page - 1)*20).limit(20).sort({createdAt : -1});
         }else{
             getResp = await PaymentModel.find({ userId : userId }).skip((page - 1)*20).limit(20);
