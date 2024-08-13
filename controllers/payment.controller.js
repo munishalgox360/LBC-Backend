@@ -112,31 +112,38 @@ const ReadTransaction = async (req, res) => {
 
     let getResp;
     const userId = new ObjectId(req.userId);
-    const page = Number(req.query.page);
+    let page = Number(req.query.page);
+    console.log(req.query.startDate)
 
     try {
+        const documents = await PaymentModel.countDocuments();
+
         if (req.query.startDate && req.query.endDate) {
             const filter = {
-                $or: [{ userId: userId }, {
-                    $and: [
-                        { createdAt: { $gte: new Date(req.query.startDate).toISOString() } },
-                        { createdAt: { $lte: new Date(req.query.endDate).toISOString() } }
-                    ]
-                }
+                $and: [
+                    { userId: userId }, 
+                    { $and: [
+                            { createdAt: { $gte: new Date(req.query.startDate).toISOString() } },
+                            { createdAt: { $lte: new Date(req.query.endDate).toISOString() } }
+                        ]
+                    }
                 ]
             };
-
+            
             getResp = await PaymentModel.find(filter).skip((page - 1) * 20).limit(20).sort({ createdAt: -1 });
         } else {
             getResp = await PaymentModel.find({ userId: userId }).skip((page - 1) * 20).limit(20);
         }
 
-        const pages = Math.ceil(Number(getResp.length) / 20);
-        const nextPage = (page < pages.length) ? ++page : null;
-        // const prevPage = (page-- > 0) ? --page : null;
+        const pages = Math.ceil(Number(documents) / 20);
+        const count = getResp.length;
+
+        const nextPage = (page < pages && documents > 20) ? ++page : null;
+        const prevPage = (nextPage == null || nextPage > pages) ? --page : null;
+        
 
         if (getResp.length > 0) {
-            return res.status(200).json({ status: 201, response: getResp, message: message.read_s, pages: pages, nextPage: nextPage /*, prevPage : prevPage */ });
+            return res.status(200).json({ status: 201, message : message.read_s, count : count, pages: pages, nextPage: nextPage, prevPage : prevPage,  response: getResp });
         } else {
             return res.status(200).json({ status: 401, response: getResp, message: message.read_f });
         }
